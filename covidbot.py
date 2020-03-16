@@ -18,7 +18,8 @@ class CovidBot():
                         'Sweden', 'Belgium', 'Denmark', 'Japan', 'Malaysia', 'Qatar', \
                         'Australia', 'Canada', 'Portugal', 'Finland']
         self.plottable_names = ['Italy', 'Spain', 'Germany', 'France', 'Norway', 'UK', \
-                                'Sweden', 'Finland', 'China', 'USA']
+                                'Sweden', 'Finland', 'China', 'USA', 'Australia', \
+                                'Japan', 'Malaysia', 'Qatar', 'Switzerland']
         try:
             self.total_counts = pd.read_table('covid_total_cases.tsv', header=0, index_col=0)
             self.cases_1M_pop = pd.read_table('covid_cases_1M_pop.tsv', header=0, index_col=0)
@@ -46,11 +47,13 @@ class CovidBot():
             cases_1M_pop = {current_date: cases_1M_pop}
             total_counts = {current_date: total_counts}
             if hasattr(self, 'cases_1M_pop'):
-                self.cases_1M_pop = self.cases_1M_pop.join(pd.DataFrame(index=row_labels, data=cases_1M_pop)) 
+                cases_1M_pop = pd.DataFrame(index=row_labels, data=cases_1M_pop)
+                self.cases_1M_pop = self.cases_1M_pop.join(cases_1M_pop) 
             else:
                 self.cases_1M_pop = pd.DataFrame(index=row_labels, data=cases_1M_pop)
             if hasattr(self, 'total_counts'):
-                self.total_counts = self.total_counts.join(pd.DataFrame(index=row_labels, data=total_counts))
+                total_counts = pd.DataFrame(index=row_labels, data=total_counts)
+                self.total_counts = self.total_counts.join(total_counts)
             else:
                 self.total_counts = pd.DataFrame(index=row_labels, data=total_counts)
             print('CovidBot: fetched current data.')
@@ -80,6 +83,7 @@ class CovidBot():
         plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.)
         sns.despine(top=True, right=True, bottom=True)
         plot.figure.savefig("covid_cases_1M_pop.svg", bbox_inches = "tight")
+        plt.clf()
         timepoints = list(self.total_counts.columns)
         day = []
         signal = []
