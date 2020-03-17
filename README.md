@@ -34,4 +34,5 @@ CovidBot fetches the data that are currently published at https://www.worldomete
 
 ## Upcoming Features
 
+* Plot with death rate by country
 * Mail alert
