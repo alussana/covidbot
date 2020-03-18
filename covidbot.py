@@ -17,9 +17,9 @@ class CovidBot():
                         'France', 'USA', 'Switzerland', 'Norway', 'UK', 'Netherlands', \
                         'Sweden', 'Belgium', 'Denmark', 'Japan', 'Malaysia', 'Qatar', \
                         'Australia', 'Canada', 'Portugal', 'Finland']
-        self.plottable_names = ['Italy', 'Spain', 'Germany', 'France', 'Norway', 'UK', \
-                                'Sweden', 'Finland', 'China', 'USA', 'Australia', \
-                                'Japan', 'Malaysia', 'Qatar', 'Switzerland']
+        self.plottable_names = ['China', 'USA', 'Australia', 'Japan', \
+                                'Germany', 'UK', 'France', 'Italy', 'Spain', \
+                                'Norway', 'Sweden', 'Finland']
         try:
             self.total_counts = pd.read_table('covid_total_cases.tsv', header=0, index_col=0)
             self.cases_1M_pop = pd.read_table('covid_cases_1M_pop.tsv', header=0, index_col=0)
@@ -32,7 +32,10 @@ class CovidBot():
     def get_data(self):
         try:
             page = self.driver.get('https://www.worldometers.info/coronavirus/')
-            table = self.driver.find_element_by_xpath('//*[@id="main_table_countries"]/tbody[1]')
+            try:
+                table = self.driver.find_element_by_xpath('//*[@id="main_table_countries"]/tbody[1]')
+            except:
+                table = self.driver.find_element_by_xpath('//*[@id="main_table_countries_today"]/tbody[1]')
             total_counts = []
             cases_1M_pop = []
             total_deaths = []
@@ -109,7 +112,7 @@ class CovidBot():
         lp_data = pd.DataFrame({'Day':day, 'Country':country, 'Cases per 1M population (log2 scale)': signal})
         plot = sns.lineplot(x='Day', y='Cases per 1M population (log2 scale)', hue='Country', data=lp_data)
         plt.xticks(rotation=45, horizontalalignment='right')
-        plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.)
+        plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
         plot.figure.savefig("covid_cases_1M_pop.svg", bbox_inches = "tight")
         plt.clf()
@@ -125,7 +128,7 @@ class CovidBot():
         lp_data = pd.DataFrame({'Day':day, 'Country':country, 'Total Cases (log2 scale)': signal})
         plot = sns.lineplot(x='Day', y='Total Cases (log2 scale)', hue='Country', data=lp_data)
         plt.xticks(rotation=45, horizontalalignment='right')
-        plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.)
+        plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
         plot.figure.savefig("covid_total_cases.svg", bbox_inches = "tight")
         plt.clf()
@@ -141,10 +144,29 @@ class CovidBot():
         lp_data = pd.DataFrame({'Day':day, 'Country':country, 'Death Rate': signal})
         plot = sns.lineplot(x='Day', y='Death Rate', hue='Country', data=lp_data)
         plt.xticks(rotation=45, horizontalalignment='right')
-        plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.)
+        plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
         plot.figure.savefig("covid_death_rate.svg", bbox_inches = "tight")
         print('CovidBot: data has been plotted.')
+        plt.clf()
+        timepoints = list(self.total_deaths.columns)
+        day = []
+        signal = []
+        country = []
+        for i in timepoints:
+            for j in self.plottable_names:
+                day.append(i)
+                country.append(j)
+                if self.total_deaths[i][j] == 0:
+                    signal.append(0)
+                else:
+                    signal.append(log2(self.total_deaths[i][j]))
+        lp_data = pd.DataFrame({'Day':day, 'Country':country, 'Total Deaths (log2 scale)': signal})
+        plot = sns.lineplot(x='Day', y='Total Deaths (log2 scale)', hue='Country', data=lp_data)
+        plt.xticks(rotation=45, horizontalalignment='right')
+        plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
+        sns.despine(top=True, right=True, bottom=True)
+        plot.figure.savefig("covid_total_deaths.svg", bbox_inches = "tight")
 
 if __name__ == '__main__':
     covidbot = CovidBot()
