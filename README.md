@@ -15,7 +15,7 @@ Data collection of relevant statistics about the novel Coronavirus pandemic was 
 
 ### Coronavirus Death Rate
 
-![covid_death_rate](/home/alessandro/nykterlab/covidbot/covidbot/covid_death_rate.svg)
+![covid_death_rate](covid_death_rate.svg)
 
 ### Total Confirmed Deaths Due To Coronavirus
 
@@ -77,8 +77,8 @@ Add the task to the `crontab` schedule:
 
 [X] Plot of death rate by country
 
-[  ] Plot of non-cumulative distribution of new cases by country
+[_] Plot of non-cumulative distribution of new cases by country
 
-[  ] Mail alert
+[_] Mail alert
 
 Have comments, suggestions, or interest in collaboration? Just drop a quick email to alessandro.lussana@pm.me
