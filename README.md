@@ -41,7 +41,7 @@ Accordingly, the following plots are generated:
 
 ## How To Use CovidBot
 
-CovidBot can be run every day to automatically collect data over time, store them locally, and generate plots. To do so the easiest and fully-automatic way is to put `covidbot.py`in your PATH variable, and to use `crontab` to run it daily at e.g. 23:55. Here is how to do it:
+CovidBot can be run every day to automatically collect data over time, store them locally, and generate plots. To do so the easiest and fully-automatic way is to use `crontab` to run it daily at a specified time, e.g. 23:55. Here is how to do it:
 
 Clone this repository in a `/path/of/your/choice`:
 
@@ -50,19 +50,13 @@ cd /path/of/your/choice
 git clone https://github.com/alussana/covidbot
 ```
 
-Add `covidbot.py` to PATH:
-
-```
-export PATH="$PATH:/path/of/your/choice/covidbot/covidbot.py"
-```
-
 Add the task to the `crontab` schedule:
 
 * `crontab -e` will open the crontab task file
 
 * Add the following line and save it:
 
-  `55 23 * * * covidbot >/dev/null 2>&1`
+  `55 23 * * * cd /path/of/your/choice; ./covidbot.py >/dev/null 2>&1`
 
 ### Requirements
 
