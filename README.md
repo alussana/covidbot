@@ -56,7 +56,7 @@ Add the task to the `crontab` schedule:
 
 * Add the following line and save it:
 
-  `55 23 * * * cd /path/of/your/choice; ./covidbot.py >/dev/null 2>&1`
+  `55 23 * * * cd /path/of/your/choice/covidbot; ./covidbot.py >/dev/null 2>&1`
 
 ### Requirements
 
