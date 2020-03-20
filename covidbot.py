@@ -98,9 +98,9 @@ class CovidBot():
         self.total_deaths.to_csv(prefix / 'covid_total_deaths.tsv', sep='\t')
         print(f'CovidBot: exported data in {prefix}/')
 
-    def plot_data(self):
+    def plot_data(self, context="paper"):
         sns.set(style="darkgrid", palette='colorblind')
-        sns.set_context("paper")
+        sns.set_context(context)
         timepoints = list(self.cases_1M_pop.columns)
         day = []
         signal = []
@@ -173,4 +173,4 @@ if __name__ == '__main__':
     covidbot = CovidBot()
     covidbot.get_data()
     covidbot.export_data('.')
-    covidbot.plot_data()
+    covidbot.plot_data("notebook")
