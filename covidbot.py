@@ -99,7 +99,7 @@ class CovidBot():
         print(f'CovidBot: exported data in {prefix}/')
 
     def plot_data(self, context="paper"):
-        sns.set(style="darkgrid", palette='colorblind')
+        sns.set(style="darkgrid")
         sns.set_context(context)
         timepoints = list(self.cases_1M_pop.columns)
         day = []
@@ -111,7 +111,7 @@ class CovidBot():
                 country.append(j)
                 signal.append(log2(self.cases_1M_pop[i][j]))
         lp_data = pd.DataFrame({'Day':day, 'Country':country, 'Cases per 1M population (log2 scale)': signal})
-        plot = sns.lineplot(x='Day', y='Cases per 1M population (log2 scale)', hue='Country', data=lp_data)
+        plot = sns.lineplot(x='Day', y='Cases per 1M population (log2 scale)', hue='Country', palette='Paired', data=lp_data)
         plt.xticks(rotation=90, horizontalalignment='right')
         plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
@@ -127,7 +127,7 @@ class CovidBot():
                 country.append(j)
                 signal.append(log2(self.total_counts[i][j]))
         lp_data = pd.DataFrame({'Day':day, 'Country':country, 'Total Cases (log2 scale)': signal})
-        plot = sns.lineplot(x='Day', y='Total Cases (log2 scale)', hue='Country', data=lp_data)
+        plot = sns.lineplot(x='Day', y='Total Cases (log2 scale)', hue='Country', palette='Paired', data=lp_data)
         plt.xticks(rotation=90, horizontalalignment='right')
         plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
@@ -143,7 +143,7 @@ class CovidBot():
                 country.append(j)
                 signal.append(self.death_rate[i][j])
         lp_data = pd.DataFrame({'Day':day, 'Country':country, 'Death Rate': signal})
-        plot = sns.lineplot(x='Day', y='Death Rate', hue='Country', data=lp_data)
+        plot = sns.lineplot(x='Day', y='Death Rate', hue='Country', palette='Paired', data=lp_data)
         plt.xticks(rotation=90, horizontalalignment='right')
         plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
@@ -163,7 +163,7 @@ class CovidBot():
                 else:
                     signal.append(log2(self.total_deaths[i][j]))
         lp_data = pd.DataFrame({'Day':day, 'Country':country, 'Total Deaths (log2 scale)': signal})
-        plot = sns.lineplot(x='Day', y='Total Deaths (log2 scale)', hue='Country', data=lp_data)
+        plot = sns.lineplot(x='Day', y='Total Deaths (log2 scale)', hue='Country', palette='Paired', data=lp_data)
         plt.xticks(rotation=90, horizontalalignment='right')
         plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
