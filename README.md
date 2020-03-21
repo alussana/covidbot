@@ -69,7 +69,7 @@ Add the task to the `crontab` schedule:
 
 ## Background
 
-Around the 10th of March 2020 COVID-19 cases started to increase in Finland, the country that is hosting me while I'm working on my Master's thesis project. That was also the time when I decided to develop a simple tool to track the changes of a few metrics related to the COVID-19 pandemic over time and in different regions of the world. Being aware that I could not do much against the Coronavirus problem myself, I decided to collect publicly available data for my personal interest, in order to eventually run a little analysis. The main aim is to gain some insights on the major factors that have greater effects on the health care systems efficacy, here roughly approximated by the [death rate](#Coronavirus-Death-Rate).
+Around the 15th of March 2020 COVID-19 cases started to increase in Finland, the country that is hosting me while I'm working on my Master's thesis project. I then developed a simple tool to track the changes of a few metrics related to the COVID-19 pandemic over time and in different regions of the world. Being aware that I could not do much against the Coronavirus problem myself, I decided to collect publicly available data for my personal interest, in order to monitor the situation and display the information that are more relevant to me in a customized manner. Eventually, a little analysis may possibly give some insights on the major factors that have greater effects on the health care systems efficacy, here roughly approximated by the [death rate](#Coronavirus-Death-Rate).
 
 ## Upcoming Features
 
