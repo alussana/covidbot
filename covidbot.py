@@ -4,6 +4,7 @@ from selenium import webdriver
 from datetime import datetime
 from pathlib import Path
 from math import log2
+from selenium.webdriver.firefox.options import Options
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -11,7 +12,9 @@ import seaborn as sns
 class CovidBot():
     
     def __init__(self):
-        self.driver = webdriver.Firefox()
+        options = Options()
+        options.headless = True
+        self.driver = webdriver.Firefox(options=options)
         print('CovidBot: deployed webdriver.')
         self.names = [  'China', 'Italy', 'Iran', 'S. Korea', 'Spain', 'Germany', \
                         'France', 'USA', 'Switzerland', 'Norway', 'UK', 'Netherlands', \
@@ -30,7 +33,7 @@ class CovidBot():
             print('CovidBot: no previous records found. Starting data collection form scratch.')
     
     def get_data(self):
-        try:
+        #try:
             page = self.driver.get('https://www.worldometers.info/coronavirus/')
             try:
                 table = self.driver.find_element_by_xpath('//*[@id="main_table_countries"]/tbody[1]')
@@ -49,7 +52,7 @@ class CovidBot():
                     row = table.find_element_by_xpath(f"//a[contains(text(), '{name}')]")
                     row = row.find_element_by_xpath("./../..")
                 cases = int(row.find_element_by_xpath("*[2]").text.replace(',', ''))
-                fraction = row.find_element_by_xpath("*[9]").text
+                fraction = row.find_element_by_xpath("*[9]").text.replace(',', '')
                 fraction = float(fraction)
                 deaths = row.find_element_by_xpath("*[4]").text.replace(',', '')
                 if deaths == '':
@@ -86,9 +89,9 @@ class CovidBot():
                 self.death_rate = self.death_rate.join(death_rate)
             else:
                 self.death_rate = pd.DataFrame(index=row_labels, data=death_rate)
-            print('CovidBot: fetched current data.')
-        except:
-            print('CovidBot: could not fetch data :(')
+            #print('CovidBot: fetched current data.')
+        #except:
+            #print('CovidBot: could not fetch data :(')
         
     def export_data(self, prefix):
         prefix = Path(prefix)
