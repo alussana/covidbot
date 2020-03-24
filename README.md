@@ -39,6 +39,13 @@ Accordingly, the following plots are generated:
 * `covid_total_cases.svg`
 * `covid_total_deaths.svg`
 
+Plots of non-cumulative distributions of new deaths and new cases for a given `${country}` can be also generated. The naming convention is the following:
+
+* `covid_cases_${country}.svg`
+* `covid_deaths_${country}.svg`
+
+For instance, at the bottom of this page additional plots for [Italy](#italian-situation) are displayed:
+
 ## How To Use CovidBot
 
 CovidBot can be run every day to automatically collect data over time, store them locally, and generate plots. To do so the easiest and fully-automatic way is to use `crontab` to run it daily at a specified time, e.g. 23:55. Here is how to do it:
@@ -71,11 +78,23 @@ Add the task to the `crontab` schedule:
 
 Around the 15th of March 2020 COVID-19 cases started to increase in Finland, the country that is hosting me while I'm working on my Master's thesis project. I then developed a simple tool to track the changes of a few metrics related to the COVID-19 pandemic over time and in different regions of the world. I decided to collect publicly available data for my personal interest, in order to monitor the situation and display the information that are more relevant to me in a customized manner.
 
+## Italian Situation
+
+Country-specific plots for Italy are displayed here
+
+### Confirmed New Cases Distribution
+
+![covid_cases_Italy](covid_cases_Italy.svg)
+
+### Confirmed New Deaths Distribution
+
+![covid_deaths_Italy](covid_deaths_Italy.svg)
+
 ## Upcoming Features
 
 [X] Plot of death rate by country
 
-[_] Plot of non-cumulative distribution of new cases by country
+[X] Country-specific plots of non-cumulative distribution of new cases and new deaths
 
 [_] Mail alert
 

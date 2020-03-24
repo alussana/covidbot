@@ -33,7 +33,7 @@ class CovidBot():
             print('CovidBot: no previous records found. Starting data collection form scratch.')
     
     def get_data(self):
-        #try:
+        try:
             page = self.driver.get('https://www.worldometers.info/coronavirus/')
             try:
                 table = self.driver.find_element_by_xpath('//*[@id="main_table_countries"]/tbody[1]')
@@ -89,21 +89,56 @@ class CovidBot():
                 self.death_rate = self.death_rate.join(death_rate)
             else:
                 self.death_rate = pd.DataFrame(index=row_labels, data=death_rate)
-            #print('CovidBot: fetched current data.')
-        #except:
-            #print('CovidBot: could not fetch data :(')
+            print('CovidBot: fetched current data.')
+        except:
+            print('CovidBot: could not fetch data :(')
         
-    def export_data(self, prefix):
+    def export_data(self, prefix='.'):
         prefix = Path(prefix)
         self.total_counts.to_csv(prefix / 'covid_total_cases.tsv', sep='\t')
         self.cases_1M_pop.to_csv(prefix / 'covid_cases_1M_pop.tsv', sep='\t')
         self.death_rate.to_csv(prefix / 'covid_death_rate.tsv', sep='\t')
         self.total_deaths.to_csv(prefix / 'covid_total_deaths.tsv', sep='\t')
         print(f'CovidBot: exported data in {prefix}/')
+    
+    def plot_deaths_by_day(self, country, prefix='.', context='paper'):
+        plt.clf()
+        sns.set(style="darkgrid")
+        prefix = Path(prefix)
+        timepoints = list(self.total_deaths.columns)
+        signal = self.total_deaths[self.total_deaths.index.isin([country])]
+        day = []
+        delta = []
+        for i in range(1, len(timepoints)):
+            day.append(timepoints[i])
+            delta.append(int(signal[timepoints[i]] - signal[timepoints[i - 1]]))
+        cp_data = pd.DataFrame({'Day':day, 'Confirmed Deaths':delta})
+        plot=sns.catplot(x='Day', y='Confirmed Deaths', data=cp_data, kind="bar", palette=sns.color_palette(['black']), alpha=0.6)
+        plt.xticks(rotation=90, horizontalalignment='right')
+        plot.savefig(prefix / f"covid_deaths_{country}.svg", bbox_inches = "tight")
 
-    def plot_data(self, context="paper"):
+    def plot_cases_by_day(self, country, prefix='.', context='paper'):
+        plt.clf()
+        sns.set(style="darkgrid")
+        prefix = Path(prefix)
+        timepoints = list(self.total_counts.columns)
+        signal = self.total_counts[self.total_counts.index.isin([country])]
+        day = []
+        delta = []
+        for i in range(1, len(timepoints)):
+            day.append(timepoints[i])
+            delta.append(int(signal[timepoints[i]] - signal[timepoints[i - 1]]))        
+        cp_data = pd.DataFrame({'Day':day, 'Confirmed Cases':delta})
+        plot=sns.catplot(x='Day', y='Confirmed Cases', data=cp_data, kind="bar", palette=sns.color_palette(['cyan']), alpha=0.6)
+        plt.xticks(rotation=90, horizontalalignment='right')
+        plot.savefig(prefix / f"covid_cases_{country}.svg", bbox_inches = "tight")
+
+    def plot_data(self, context="paper", prefix='.'):
+        prefix = Path(prefix)
+        plt.clf()
         sns.set(style="darkgrid")
         sns.set_context(context)
+        ## lineplot: Cases per 1M population (log2 scale)
         timepoints = list(self.cases_1M_pop.columns)
         day = []
         signal = []
@@ -118,7 +153,8 @@ class CovidBot():
         plt.xticks(rotation=90, horizontalalignment='right')
         plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
-        plot.figure.savefig("covid_cases_1M_pop.svg", bbox_inches = "tight")
+        plot.figure.savefig(prefix / "covid_cases_1M_pop.svg", bbox_inches = "tight")
+        ## lineplot: Total Cases (log2 scale)'
         plt.clf()
         timepoints = list(self.total_counts.columns)
         day = []
@@ -134,7 +170,8 @@ class CovidBot():
         plt.xticks(rotation=90, horizontalalignment='right')
         plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
-        plot.figure.savefig("covid_total_cases.svg", bbox_inches = "tight")
+        plot.figure.savefig(prefix / "covid_total_cases.svg", bbox_inches = "tight")
+        ## lineplot: Death Rate
         plt.clf()
         timepoints = list(self.death_rate.columns)
         day = []
@@ -150,8 +187,9 @@ class CovidBot():
         plt.xticks(rotation=90, horizontalalignment='right')
         plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
-        plot.figure.savefig("covid_death_rate.svg", bbox_inches = "tight")
+        plot.figure.savefig(prefix / "covid_death_rate.svg", bbox_inches = "tight")
         print('CovidBot: data has been plotted.')
+        ## lineplot: Total Deaths (log2 scale)
         plt.clf()
         timepoints = list(self.total_deaths.columns)
         day = []
@@ -170,10 +208,13 @@ class CovidBot():
         plt.xticks(rotation=90, horizontalalignment='right')
         plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
-        plot.figure.savefig("covid_total_deaths.svg", bbox_inches = "tight")
+        plot.figure.savefig(prefix / "covid_total_deaths.svg", bbox_inches = "tight")
 
 if __name__ == '__main__':
     covidbot = CovidBot()
     covidbot.get_data()
-    covidbot.export_data('.')
+    covidbot.export_data()
+    covidbot.plot_cases_by_day('Italy', context="notebook")
+    covidbot.plot_deaths_by_day('Italy', context="notebook")
     covidbot.plot_data("notebook")
+    covidbot.driver.close()
