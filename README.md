@@ -44,7 +44,7 @@ Plots of non-cumulative distributions of new deaths and new cases for a given `$
 * `covid_cases_${country}.svg`
 * `covid_deaths_${country}.svg`
 
-For instance, at the bottom of this page additional plots for [Italy](#italian-situation) are displayed:
+For instance, at the bottom of this page additional plots for [Italy](#italian-situation) are displayed.
 
 ## How To Use CovidBot
 
@@ -80,7 +80,7 @@ Around the 15th of March 2020 COVID-19 cases started to increase in Finland, the
 
 ## Italian Situation
 
-Country-specific plots for Italy are displayed here
+Country-specific plots for Italy
 
 ### Confirmed New Cases Distribution
 
