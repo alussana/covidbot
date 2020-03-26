@@ -31,6 +31,9 @@ class CovidBot():
             print('CovidBot: previous records have been loaded.')
         except:
             print('CovidBot: no previous records found. Starting data collection form scratch.')
+
+    def close_driver(self):
+        self.driver.close()
     
     def get_data(self):
         try:
@@ -214,7 +217,7 @@ if __name__ == '__main__':
     covidbot = CovidBot()
     covidbot.get_data()
     covidbot.export_data()
+    covidbot.plot_data("notebook")
     covidbot.plot_cases_by_day('Italy', context="notebook")
     covidbot.plot_deaths_by_day('Italy', context="notebook")
-    covidbot.plot_data("notebook")
-    covidbot.driver.close()
+    covidbot.close_driver()
