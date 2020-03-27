@@ -107,6 +107,7 @@ class CovidBot():
     def plot_deaths_by_day(self, country, prefix='.', context='paper'):
         plt.clf()
         sns.set(style="darkgrid")
+        sns.set_context(context)
         prefix = Path(prefix)
         timepoints = list(self.total_deaths.columns)
         signal = self.total_deaths[self.total_deaths.index.isin([country])]
@@ -123,6 +124,7 @@ class CovidBot():
     def plot_cases_by_day(self, country, prefix='.', context='paper'):
         plt.clf()
         sns.set(style="darkgrid")
+        sns.set_context(context)
         prefix = Path(prefix)
         timepoints = list(self.total_counts.columns)
         signal = self.total_counts[self.total_counts.index.isin([country])]
