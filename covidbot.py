@@ -104,7 +104,7 @@ class CovidBot():
         self.total_deaths.to_csv(prefix / 'covid_total_deaths.tsv', sep='\t')
         print(f'CovidBot: exported data in {prefix}/')
     
-    def plot_deaths_by_day(self, country, prefix='.', context='paper'):
+    def plot_deaths_by_day(self, country, prefix='.', context='paper', aspect=2):
         plt.clf()
         sns.set(style="darkgrid")
         sns.set_context(context)
@@ -117,11 +117,11 @@ class CovidBot():
             day.append(timepoints[i])
             delta.append(int(signal[timepoints[i]] - signal[timepoints[i - 1]]))
         cp_data = pd.DataFrame({'Day':day, 'Confirmed Deaths':delta})
-        plot=sns.catplot(x='Day', y='Confirmed Deaths', data=cp_data, kind="bar", palette=sns.color_palette(['black']), alpha=0.6)
+        plot=sns.catplot(x='Day', y='Confirmed Deaths', data=cp_data, kind="bar", palette=sns.color_palette(['black']), alpha=0.6, aspect=aspect)
         plt.xticks(rotation=90, horizontalalignment='right')
         plot.savefig(prefix / f"covid_deaths_{country}.svg", bbox_inches = "tight")
 
-    def plot_cases_by_day(self, country, prefix='.', context='paper'):
+    def plot_cases_by_day(self, country, prefix='.', context='paper', aspect=2):
         plt.clf()
         sns.set(style="darkgrid")
         sns.set_context(context)
@@ -134,7 +134,7 @@ class CovidBot():
             day.append(timepoints[i])
             delta.append(int(signal[timepoints[i]] - signal[timepoints[i - 1]]))        
         cp_data = pd.DataFrame({'Day':day, 'Confirmed Cases':delta})
-        plot=sns.catplot(x='Day', y='Confirmed Cases', data=cp_data, kind="bar", palette=sns.color_palette(['cyan']), alpha=0.6)
+        plot=sns.catplot(x='Day', y='Confirmed Cases', data=cp_data, kind="bar", palette=sns.color_palette(['cyan']), alpha=0.6, aspect=aspect)
         plt.xticks(rotation=90, horizontalalignment='right')
         plot.savefig(prefix / f"covid_cases_{country}.svg", bbox_inches = "tight")
 
@@ -220,6 +220,6 @@ if __name__ == '__main__':
     covidbot.get_data()
     covidbot.export_data()
     covidbot.plot_data("notebook")
-    covidbot.plot_cases_by_day('Italy', context="notebook")
-    covidbot.plot_deaths_by_day('Italy', context="notebook")
+    covidbot.plot_cases_by_day('Italy', context="notebook", aspect=1.75)
+    covidbot.plot_deaths_by_day('Italy', context="notebook", aspect=1.75)
     covidbot.close_driver()
