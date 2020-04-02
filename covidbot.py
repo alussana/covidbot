@@ -138,11 +138,12 @@ class CovidBot():
         plt.xticks(rotation=90, horizontalalignment='right')
         plot.savefig(prefix / f"covid_cases_{country}.svg", bbox_inches = "tight")
 
-    def plot_data(self, context="paper", prefix='.'):
+    def plot_data(self, context="paper", prefix='.', figsize=(9,5)):
         prefix = Path(prefix)
         plt.clf()
         sns.set(style="darkgrid")
         sns.set_context(context)
+        plt.figure(figsize=figsize)
         ## lineplot: Cases per 1M population (log2 scale)
         timepoints = list(self.cases_1M_pop.columns)
         day = []
@@ -219,7 +220,7 @@ if __name__ == '__main__':
     covidbot = CovidBot()
     covidbot.get_data()
     covidbot.export_data()
-    covidbot.plot_data("notebook")
+    covidbot.plot_data(context="notebook", figsize=(9,5))
     covidbot.plot_cases_by_day('Italy', context="notebook", aspect=1.75)
     covidbot.plot_deaths_by_day('Italy', context="notebook", aspect=1.75)
     covidbot.close_driver()
