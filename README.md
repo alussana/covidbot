@@ -96,6 +96,10 @@ Country-specific plots for Italy
 
 [X] Country-specific plots of non-cumulative distribution of new cases and new deaths
 
+[_] Plot of total clinical tests by country
+
+[_] Plot of fraction of tested population by country
+
 [_] Mail alert
 
 Have comments, suggestions, or interest in collaboration? Just drop a quick email to alessandro.lussana@pm.me
