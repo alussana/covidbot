@@ -28,6 +28,9 @@ class CovidBot():
             self.cases_1M_pop = pd.read_table('covid_cases_1M_pop.tsv', header=0, index_col=0)
             self.total_deaths = pd.read_table('covid_total_deaths.tsv', header=0, index_col=0)
             self.death_rate = pd.read_table('covid_death_rate.tsv', header=0, index_col=0)
+            self.total_tests = pd.read_table('covid_total_tests.tsv', header=0, index_col=0)
+            self.tests_1M_pop = pd.read_table('covid_tests_1M_pop.tsv', header=0, index_col=0)
+            self.pos_rate = pd.read_table('covid_pos_rate.tsv', header=0, index_col=0)
             print('CovidBot: previous records have been loaded.')
         except:
             print('CovidBot: no previous records found. Starting data collection form scratch.')
@@ -47,6 +50,9 @@ class CovidBot():
             total_deaths = []
             death_rate = []
             row_labels = []
+            total_tests = []
+            tests_1M_pop = []
+            pos_rate = []
             for name in self.names:
                 try:
                     row = table.find_element_by_xpath(f"//td[contains(text(), '{name}')]")
@@ -55,23 +61,41 @@ class CovidBot():
                     row = table.find_element_by_xpath(f"//a[contains(text(), '{name}')]")
                     row = row.find_element_by_xpath("./../..")
                 cases = int(row.find_element_by_xpath("*[2]").text.replace(',', ''))
-                fraction = row.find_element_by_xpath("*[9]").text.replace(',', '')
-                fraction = float(fraction)
+                fraction = float(row.find_element_by_xpath("*[9]").text.replace(',', ''))
                 deaths = row.find_element_by_xpath("*[4]").text.replace(',', '')
+                tests = row.find_element_by_xpath("*[11]").text.replace(',', '')
+                tests_fraction = row.find_element_by_xpath("*[12]").text.replace(',', '')
                 if deaths == '':
                     deaths = 0
                 else:
                     deaths = int(deaths)
+                if tests == '':
+                    tests = 'NaN'
+                else:
+                    tests = int(tests)
+                if tests_fraction == '':
+                    tests_fraction = 'NaN'
+                else:
+                    tests_fraction = float(tests_fraction)
                 total_counts.append(cases) 
                 cases_1M_pop.append(fraction)
                 total_deaths.append(deaths)
                 death_rate.append(deaths / cases)
+                total_tests.append(tests)
+                tests_1M_pop.append(tests_fraction)
+                try:
+                    pos_rate.append(cases / tests)
+                except:
+                    pos_rate.append('NaN')
                 row_labels.append(name)
             current_date = str(datetime.now())[:10]
             cases_1M_pop = {current_date: cases_1M_pop}
             total_counts = {current_date: total_counts}
             total_deaths = {current_date: total_deaths}
             death_rate = {current_date: death_rate}
+            total_tests = {current_date: total_tests}
+            tests_1M_pop = {current_date: tests_1M_pop}
+            pos_rate = {current_date: pos_rate}
             if hasattr(self, 'cases_1M_pop'):
                 cases_1M_pop = pd.DataFrame(index=row_labels, data=cases_1M_pop)
                 self.cases_1M_pop = self.cases_1M_pop.join(cases_1M_pop) 
@@ -92,6 +116,21 @@ class CovidBot():
                 self.death_rate = self.death_rate.join(death_rate)
             else:
                 self.death_rate = pd.DataFrame(index=row_labels, data=death_rate)
+            if hasattr(self, 'total_tests'):
+                total_tests = pd.DataFrame(index=row_labels, data=total_tests)
+                self.total_tests = self.total_tests.join(total_tests)
+            else:
+                self.total_tests = pd.DataFrame(index=row_labels, data=total_tests)
+            if hasattr(self, 'tests_1M_pop'):
+                tests_1M_pop = pd.DataFrame(index=row_labels, data=tests_1M_pop)
+                self.tests_1M_pop = self.tests_1M_pop.join(tests_1M_pop)
+            else:
+                self.tests_1M_pop = pd.DataFrame(index=row_labels, data=tests_1M_pop)
+            if hasattr(self, 'pos_rate'):
+                pos_rate = pd.DataFrame(index=row_labels, data=pos_rate)
+                self.pos_rate = self.pos_rate.join(pos_rate)
+            else:
+                self.pos_rate = pd.DataFrame(index=row_labels, data=pos_rate)
             print('CovidBot: fetched current data.')
         except:
             print('CovidBot: could not fetch data :(')
@@ -102,6 +141,9 @@ class CovidBot():
         self.cases_1M_pop.to_csv(prefix / 'covid_cases_1M_pop.tsv', sep='\t')
         self.death_rate.to_csv(prefix / 'covid_death_rate.tsv', sep='\t')
         self.total_deaths.to_csv(prefix / 'covid_total_deaths.tsv', sep='\t')
+        self.total_tests.to_csv(prefix / 'covid_total_tests.tsv', sep='\t')
+        self.tests_1M_pop.to_csv(prefix / 'covid_tests_1M_pop.tsv', sep='\t')
+        self.pos_rate.to_csv(prefix / 'covid_pos_rate.tsv', sep='\t')
         print(f'CovidBot: exported data in {prefix}/')
     
     def plot_deaths_by_day(self, country, prefix='.', context='paper', aspect=2):
