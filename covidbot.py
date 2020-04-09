@@ -23,6 +23,9 @@ class CovidBot():
         self.plottable_names = ['China', 'USA', 'Australia', 'Japan', \
                                 'Germany', 'UK', 'France', 'Italy', 'Spain', \
                                 'Norway', 'Sweden', 'Finland']
+        self.plottable_names_tests = ['USA', 'Australia', 'Japan', 'Belgium', \
+                                      'Germany', 'UK', 'France', 'Italy', 'Spain', \
+                                      'Norway', 'Sweden', 'Finland']
         try:
             self.total_counts = pd.read_table('covid_total_cases.tsv', header=0, index_col=0)
             self.cases_1M_pop = pd.read_table('covid_cases_1M_pop.tsv', header=0, index_col=0)
@@ -159,9 +162,10 @@ class CovidBot():
             day.append(timepoints[i])
             delta.append(int(signal[timepoints[i]] - signal[timepoints[i - 1]]))
         cp_data = pd.DataFrame({'Day':day, 'Confirmed Deaths':delta})
-        plot=sns.catplot(x='Day', y='Confirmed Deaths', data=cp_data, kind="bar", palette=sns.color_palette(['black']), alpha=0.6, aspect=aspect)
+        plot=sns.catplot(x='Day', y='Confirmed Deaths', data=cp_data, kind="bar", palette=sns.color_palette(['Red']), alpha=0.6, aspect=aspect)
         plt.xticks(rotation=90, horizontalalignment='right')
         plot.savefig(prefix / f"covid_deaths_{country}.svg", bbox_inches = "tight")
+        print(f'CovidBot: plot saved in {prefix}/covid_deaths_{country}.svg')
 
     def plot_cases_by_day(self, country, prefix='.', context='paper', aspect=2):
         plt.clf()
@@ -179,6 +183,7 @@ class CovidBot():
         plot=sns.catplot(x='Day', y='Confirmed Cases', data=cp_data, kind="bar", palette=sns.color_palette(['cyan']), alpha=0.6, aspect=aspect)
         plt.xticks(rotation=90, horizontalalignment='right')
         plot.savefig(prefix / f"covid_cases_{country}.svg", bbox_inches = "tight")
+        print(f'CovidBot: plot saved in {prefix}/covid_cases_{country}.svg')
 
     def plot_data(self, context="paper", prefix='.', figsize=(9,5)):
         prefix = Path(prefix)
@@ -236,7 +241,6 @@ class CovidBot():
         plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
         plot.figure.savefig(prefix / "covid_death_rate.svg", bbox_inches = "tight")
-        print('CovidBot: data has been plotted.')
         ## lineplot: Total Deaths (log2 scale)
         plt.clf()
         timepoints = list(self.total_deaths.columns)
@@ -257,12 +261,52 @@ class CovidBot():
         plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
         sns.despine(top=True, right=True, bottom=True)
         plot.figure.savefig(prefix / "covid_total_deaths.svg", bbox_inches = "tight")
+        ## lineplot: Percentage Of Tested Population
+        plt.clf()
+        timepoints = list(self.tests_1M_pop.columns)
+        day = []
+        signal = []
+        country = []
+        for i in timepoints:
+            for j in self.plottable_names_tests:
+                day.append(i)
+                country.append(j)
+                if self.tests_1M_pop[i][j] == 0:
+                    signal.append(0)
+                else:
+                    signal.append(self.tests_1M_pop[i][j] / 10000)
+        lp_data = pd.DataFrame({'Day':day, 'Country':country, 'Percentage Of Tested Population': signal})
+        plot = sns.lineplot(x='Day', y='Percentage Of Tested Population', hue='Country', palette='Paired', data=lp_data)
+        plt.xticks(rotation=90, horizontalalignment='right')
+        plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
+        sns.despine(top=True, right=True, bottom=True)
+        plot.figure.savefig(prefix / "covid_tests_1M_pop.svg", bbox_inches = "tight")
+        ## lineplot: Positive Tests Rate
+        plt.clf()
+        timepoints = list(self.pos_rate.columns)
+        day = []
+        signal = []
+        country = []
+        for i in timepoints:
+            for j in self.plottable_names_tests:
+                day.append(i)
+                country.append(j)
+                signal.append(self.pos_rate[i][j])
+        lp_data = pd.DataFrame({'Day':day, 'Country':country, 'Positive Tests Rate': signal})
+        plot = sns.lineplot(x='Day', y='Positive Tests Rate', hue='Country', palette='Paired', data=lp_data)
+        plt.xticks(rotation=90, horizontalalignment='right')
+        plt.legend(bbox_to_anchor=(1, 1), borderaxespad=0.5)
+        sns.despine(top=True, right=True, bottom=True)
+        plot.figure.savefig(prefix / "covid_pos_rate.svg", bbox_inches = "tight")
+        print('CovidBot: data has been plotted.')
 
 if __name__ == '__main__':
     covidbot = CovidBot()
     covidbot.get_data()
     covidbot.export_data()
-    covidbot.plot_data(context="notebook", figsize=(9,5))
-    covidbot.plot_cases_by_day('Italy', context="notebook", aspect=1.75)
-    covidbot.plot_deaths_by_day('Italy', context="notebook", aspect=1.75)
+    covidbot.plot_data(context="notebook", figsize=(1,5))
+    covidbot.plot_cases_by_day('Italy', context="notebook", aspect=2)
+    covidbot.plot_deaths_by_day('Italy', context="notebook", aspect=2)
+    covidbot.plot_cases_by_day('Finland', context="notebook", aspect=2)
+    covidbot.plot_deaths_by_day('Finland', context="notebook", aspect=2)
     covidbot.close_driver()
