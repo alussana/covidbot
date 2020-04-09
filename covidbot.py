@@ -60,6 +60,9 @@ class CovidBot():
                 try:
                     row = table.find_element_by_xpath(f"//td[contains(text(), '{name}')]")
                     row = row.find_element_by_xpath("./..")
+                    if row.text == '':
+                        row = table.find_element_by_xpath(f"//a[contains(text(), '{name}')]")
+                        row = row.find_element_by_xpath("./../..")
                 except:
                     row = table.find_element_by_xpath(f"//a[contains(text(), '{name}')]")
                     row = row.find_element_by_xpath("./../..")
@@ -304,7 +307,7 @@ if __name__ == '__main__':
     covidbot = CovidBot()
     covidbot.get_data()
     covidbot.export_data()
-    covidbot.plot_data(context="notebook", figsize=(1,5))
+    covidbot.plot_data(context="notebook", figsize=(10,5))
     covidbot.plot_cases_by_day('Italy', context="notebook", aspect=2)
     covidbot.plot_deaths_by_day('Italy', context="notebook", aspect=2)
     covidbot.plot_cases_by_day('Finland', context="notebook", aspect=2)

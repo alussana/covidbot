@@ -127,7 +127,7 @@ Country-specific plots for Finland
 
 [X] Plot of global fraction of tests with positive outcome by country
 
-[X] Plot of per-day fraction of tests with positive outcome by country
+[_] Plot of per-day fraction of tests with positive outcome by country
 
 [_] Mail alert
 
